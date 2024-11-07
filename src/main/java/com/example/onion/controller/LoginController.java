@@ -1,50 +1,40 @@
 package com.example.onion.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.view.RedirectView;
 
-import com.example.onion.entity.UserInfo;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+
 import com.example.onion.service.UserService;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.web.bind.annotation.GetMapping;
+
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class LoginController {
-
-    @Autowired
+   
+   @Autowired
     private UserService userService;
 
     @GetMapping("/loginForm")
-    public String showLoginForm() {
-        return "member/login";  // 로그인 페이지를 반환
+    public String loginForm() {
+        return "member/login"; 
+    }
+    
+    @GetMapping("/member/logout")
+    public String logout(HttpServletRequest request) {
+        // 로그아웃은 Spring Security가 처리하므로 컨트롤러에서 별도 처리 불필요
+        return "redirect:/main";
+    }
+    
+    @GetMapping("/member/checkId")
+    public String checkId(@RequestParam("userid") String userid, Model model) {
+        boolean exist = userService.isExistId(userid);  // 유저 ID 존재 여부 확인
+        model.addAttribute("userid", userid);
+        model.addAttribute("result", exist);
+        return "member/checkId";
     }
 
-    @PostMapping("/login")
-    public RedirectView handleLogin(@RequestParam String userid, @RequestParam String password) {
-        // 사용자 인증 로직
-        UserInfo user = userService.authenticate(userid, password);
-        
-        if (user != null) {
-            String role = user.getRole();
-            String redirectUrl;
-            
-            // 역할에 따른 리다이렉션 URL 결정
-            if (role.equals("ROLE_ADMIN")) {
-                redirectUrl = "/admin/home";
-            } else if (role.equals("ROLE_MANAGER")) {
-                redirectUrl = "/manager/home";
-            } else {
-                redirectUrl = "/user/home";
-            }
-            
-            return new RedirectView(redirectUrl);
-        } else {
-            // 인증 실패 시 로그인 페이지로 돌아가기
-            return new RedirectView("/login?error=true");
-        }
-    }
 }
-
 

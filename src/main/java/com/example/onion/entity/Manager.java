@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import com.example.onion.dto.ManagerDTO;
 
@@ -13,7 +13,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "manager")
+@Table(name = "MANAGER")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,9 +21,8 @@ public class Manager {
     
     @Id
     private String mid;
-    
     private String mpwd;
-    private Date mlogtime;
+    private LocalDateTime mlogtime;
     private String role;
 
     // Entity -> DTO 변환 메서드
@@ -31,4 +30,5 @@ public class Manager {
         return new ManagerDTO(mid, mpwd, mlogtime, role);
     }
 }
+
 
